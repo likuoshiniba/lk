@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#05050b" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
   <meta name="description" content="柔神专属星河：一场不会落幕的烟火。" />
   <title>柔神 · 星河来信</title>
   <style>
@@ -115,6 +117,23 @@
       opacity: 0.045;
       mix-blend-mode: soft-light;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.75'/%3E%3C/svg%3E");
+    }
+
+    .light-bloom {
+      position: fixed;
+      z-index: 6;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 45%, rgba(255, 244, 239, 0.42), rgba(255, 174, 205, 0.16) 23%, rgba(185, 201, 255, 0.08) 42%, transparent 66%);
+      mix-blend-mode: screen;
+    }
+
+    .light-bloom.is-active { animation: ignite-bloom 1.45s cubic-bezier(.18, .7, .2, 1); }
+    @keyframes ignite-bloom {
+      0% { opacity: 0; transform: scale(0.84); }
+      12% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.18); }
     }
 
     .topbar {
@@ -232,7 +251,7 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      padding: calc(92px + var(--safe-top)) clamp(20px, 6vw, 100px) calc(96px + var(--safe-bottom));
+      padding: calc(82px + var(--safe-top)) clamp(20px, 6vw, 100px) calc(70px + var(--safe-bottom));
       text-align: center;
       pointer-events: none;
     }
@@ -242,7 +261,7 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin: 0 0 clamp(25px, 4.2vh, 45px);
+      margin: 0 0 clamp(18px, 3vh, 30px);
       color: rgba(255, 248, 242, 0.54);
       font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif;
       font-size: clamp(9px, 1.2vw, 11px);
@@ -264,9 +283,9 @@
       position: relative;
       display: grid;
       place-items: center;
-      width: min(72vw, 760px);
-      aspect-ratio: 1 / 0.6;
-      margin: clamp(-40px, -4vh, -20px) 0 clamp(12px, 2.4vh, 28px);
+      width: min(66vw, 700px);
+      aspect-ratio: 1 / 0.54;
+      margin: clamp(-32px, -3vh, -16px) 0 clamp(8px, 2vh, 20px);
     }
 
     .title-stage::before {
@@ -350,6 +369,7 @@
       opacity: 0;
       transform: translateY(22px) scale(0.985);
       animation: title-in 1.4s 620ms cubic-bezier(.16, .84, .26, 1) forwards;
+      transition: filter 700ms ease;
       -webkit-user-select: none;
       user-select: none;
     }
@@ -363,6 +383,9 @@
     }
 
     .title span:last-child { transform: translateY(0.12em); }
+    .scene.is-celebrating .title { filter: drop-shadow(0 0 70px rgba(255, 196, 216, 0.34)) drop-shadow(0 0 26px rgba(185, 201, 255, 0.2)); }
+    .scene.is-celebrating .orbit-a { border-color: rgba(255, 220, 228, 0.22); }
+    .scene.is-celebrating .orbit-b { border-color: rgba(185, 201, 255, 0.2); }
     @keyframes title-in { to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes shimmer { 0%, 24% { background-position: 100% 50%; } 55%, 100% { background-position: 0% 50%; } }
     @keyframes bloom { to { opacity: 1; } }
@@ -381,7 +404,7 @@
 
     .description {
       max-width: 34em;
-      margin: 0 0 clamp(28px, 4.7vh, 46px);
+      margin: 0 0 clamp(20px, 3.7vh, 34px);
       color: var(--muted);
       font-family: "Songti SC", "STSong", "SimSun", serif;
       font-size: clamp(12px, 1.45vw, 15px);
@@ -448,6 +471,13 @@
     .btn-main:hover::before { left: 160%; }
     .btn-main:active { transform: translateY(0) scale(0.985); }
     .btn-main .star { color: var(--rose); font-size: 12px; text-shadow: 0 0 12px rgba(255, 184, 208, 0.9); }
+    .btn-main.is-igniting {
+      border-color: rgba(255, 211, 220, 0.72);
+      background: rgba(255, 184, 208, 0.18);
+      box-shadow: 0 0 32px rgba(255, 184, 208, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .btn-main.is-igniting .star { animation: star-spin 900ms ease-in-out infinite alternate; }
+    @keyframes star-spin { to { transform: rotate(180deg) scale(1.35); } }
 
     .btn-text {
       display: inline-flex;
@@ -468,7 +498,139 @@
     .btn-text:hover,
     .btn-text:focus-visible { color: var(--paper); outline: none; }
     .btn-text:hover span { transform: translate(2px, -2px); }
+    .btn-text.is-ready { color: var(--rose); text-shadow: 0 0 18px rgba(255, 184, 208, 0.55); }
+    .btn-text.is-ready span:last-child { animation: ready-glint 1.8s ease-in-out infinite; }
+    @keyframes ready-glint { 0%, 100% { opacity: 0.5; transform: translate(0, 0); } 50% { opacity: 1; transform: translate(2px, -2px); } }
     @keyframes rise-in { to { opacity: 1; transform: translateY(0); } }
+
+    .star-ritual {
+      width: min(100%, 430px);
+      margin: clamp(14px, 2.4vh, 22px) auto 0;
+      padding: 13px 16px 12px;
+      border: 1px solid rgba(255, 244, 235, 0.12);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.028);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 44px rgba(0, 0, 0, 0.13);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      pointer-events: auto;
+      opacity: 0;
+      transform: translateY(13px);
+      animation: rise-in 1.05s 1.65s cubic-bezier(.2, .8, .2, 1) forwards;
+      transition: border-color 500ms ease, box-shadow 500ms ease, background 500ms ease;
+    }
+
+    .ritual-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+      color: rgba(255, 248, 242, 0.3);
+      font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.24em;
+    }
+
+    .ritual-progress { color: rgba(255, 210, 223, 0.65); white-space: nowrap; }
+    .ritual-stars { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ritual-stars::before {
+      position: absolute;
+      top: 17px;
+      right: 14%;
+      left: 14%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 244, 235, 0.16), transparent);
+      content: "";
+    }
+
+    .ritual-star {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      gap: 7px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: rgba(255, 248, 242, 0.36);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-indent: 0.15em;
+      transition: color 260ms ease;
+    }
+
+    .star-core {
+      display: grid;
+      width: 35px;
+      height: 35px;
+      place-items: center;
+      border: 1px solid rgba(255, 244, 235, 0.18);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01));
+      color: rgba(255, 248, 242, 0.42);
+      font-size: 12px;
+      line-height: 1;
+      box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.025);
+      transition: color 300ms ease, border-color 300ms ease, background 300ms ease, box-shadow 300ms ease, transform 300ms ease;
+    }
+
+    .ritual-star:hover .star-core,
+    .ritual-star:focus-visible .star-core {
+      border-color: rgba(255, 225, 232, 0.46);
+      color: rgba(255, 248, 242, 0.82);
+      transform: translateY(-2px);
+    }
+
+    .ritual-star.is-lit { color: rgba(255, 239, 232, 0.9); }
+    .ritual-star.is-lit .star-core {
+      border-color: rgba(255, 214, 224, 0.68);
+      background: radial-gradient(circle, rgba(255, 248, 240, 0.33), rgba(255, 184, 208, 0.09) 48%, rgba(255, 255, 255, 0.02) 70%);
+      color: #fff8f2;
+      box-shadow: 0 0 18px rgba(255, 184, 208, 0.48), 0 0 44px rgba(255, 184, 208, 0.18), inset 0 0 11px rgba(255, 255, 255, 0.28);
+      animation: star-pop 560ms cubic-bezier(.16, .9, .24, 1);
+    }
+
+    @keyframes star-pop {
+      0% { transform: scale(0.72); }
+      55% { transform: scale(1.24); }
+      100% { transform: scale(1); }
+    }
+
+    .ritual-message {
+      min-height: 3.25em;
+      margin: 10px 0 0;
+      color: rgba(255, 248, 242, 0.55);
+      font-size: 10.5px;
+      letter-spacing: 0.055em;
+      line-height: 1.65;
+      text-align: center;
+      transition: color 400ms ease, opacity 180ms ease;
+    }
+
+    .ritual-message.is-changing { opacity: 0; }
+    .ritual-reset {
+      display: none;
+      margin: 5px auto 0;
+      padding: 4px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: rgba(255, 248, 242, 0.28);
+      font-size: 9px;
+      letter-spacing: 0.13em;
+    }
+
+    .ritual-reset:hover { color: rgba(255, 248, 242, 0.7); }
+    .star-ritual.is-complete {
+      border-color: rgba(255, 197, 216, 0.3);
+      background: rgba(255, 184, 208, 0.045);
+      box-shadow: 0 0 36px rgba(255, 184, 208, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+    .star-ritual.is-complete .ritual-message { color: rgba(255, 237, 225, 0.95); }
+    .star-ritual.is-complete .ritual-reset { display: block; }
 
     .bottom-info {
       position: fixed;
@@ -607,17 +769,9 @@
 
     .letter-close:hover { border-color: rgba(255, 244, 235, 0.36); background: rgba(255, 255, 255, 0.08); transform: rotate(8deg); }
 
-    .letter-kicker {
-      margin: 0 0 28px;
-      color: rgba(255, 248, 242, 0.37);
-      font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif;
-      font-size: 9px;
-      letter-spacing: 0.35em;
-    }
-
     .letter-title {
-      margin: 0 0 26px;
-      font-size: clamp(38px, 7vw, 62px);
+      margin: 0 0 clamp(24px, 4.2vh, 36px);
+      font-size: clamp(36px, 6.6vw, 58px);
       font-weight: 400;
       letter-spacing: -0.06em;
       line-height: 1;
@@ -626,72 +780,19 @@
     .letter-title em { color: var(--rose); font-style: normal; }
 
     .letter-body {
-      margin: 0 0 30px;
-      color: rgba(255, 248, 242, 0.7);
+      margin: 0;
+      color: rgba(255, 248, 242, 0.8);
       font-family: "Songti SC", "STSong", "SimSun", serif;
-      font-size: 14px;
-      letter-spacing: 0.08em;
-      line-height: 2.15;
+      font-size: 15px;
+      letter-spacing: 0.045em;
+      line-height: 1.95;
+      text-align: justify;
+      text-justify: inter-ideograph;
+      overflow-wrap: break-word;
     }
 
-    .letter-body p { margin: 0 0 17px; }
-    .letter-body .accent { color: rgba(255, 248, 242, 0.92); }
-
-    .whisper-nav {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin: 0 0 18px;
-    }
-
-    .whisper-btn {
-      padding: 12px 8px;
-      border: 1px solid rgba(255, 244, 235, 0.11);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.025);
-      cursor: pointer;
-      color: rgba(255, 248, 242, 0.46);
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
-    }
-
-    .whisper-btn:hover,
-    .whisper-btn.is-active {
-      border-color: rgba(255, 184, 208, 0.36);
-      background: rgba(255, 184, 208, 0.065);
-      color: rgba(255, 248, 242, 0.94);
-    }
-
-    .whisper-output {
-      min-height: 72px;
-      margin: 0 0 34px;
-      padding: 17px 18px;
-      border-left: 1px solid rgba(255, 184, 208, 0.42);
-      background: linear-gradient(90deg, rgba(255, 184, 208, 0.05), transparent);
-      color: rgba(255, 248, 242, 0.7);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      line-height: 1.9;
-      transition: opacity 180ms ease, transform 180ms ease;
-    }
-
-    .whisper-output.is-changing { opacity: 0; transform: translateY(4px); }
-
-    .letter-signature {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 244, 235, 0.1);
-      color: rgba(255, 248, 242, 0.38);
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      line-height: 1.8;
-    }
-
-    .signature-symbol { color: var(--rose); font-size: 20px; line-height: 1; text-shadow: 0 0 18px rgba(255, 184, 208, 0.65); }
+    .letter-body p { margin: 0 0 1.05em; }
+    .letter-body p:last-child { margin-bottom: 0; }
 
     .toast {
       position: fixed;
@@ -714,6 +815,15 @@
     }
 
     .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+    .toast.is-blessing {
+      padding: 13px 22px;
+      border-color: rgba(255, 196, 216, 0.42);
+      background: rgba(20, 14, 27, 0.9);
+      box-shadow: 0 0 42px rgba(255, 184, 208, 0.16), 0 14px 44px rgba(0, 0, 0, 0.34);
+      color: rgba(255, 248, 242, 0.96);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+    }
     :focus-visible { outline: 1px solid rgba(255, 208, 221, 0.8); outline-offset: 4px; }
 
     @media (max-width: 760px) {
@@ -722,7 +832,7 @@
       .pill { min-height: 32px; padding: 0 11px; font-size: 9px; }
       .side-label { display: none; }
       .hero { padding-right: 22px; padding-left: 22px; }
-      .title-stage { width: 100%; margin-top: -28px; }
+      .title-stage { width: 100%; margin-top: -18px; }
       .title { font-size: clamp(94px, 31vw, 156px); gap: 0; }
       .subtitle { letter-spacing: 0.22em; text-indent: 0.22em; }
       .description { max-width: 21em; font-size: 12px; }
@@ -730,10 +840,15 @@
       .cta-row { flex-direction: column; gap: 8px; }
       .btn-main { min-height: 49px; padding: 0 21px; font-size: 12px; }
       .btn-text { min-height: 35px; font-size: 11px; }
+      .star-ritual { margin-top: 14px; padding: 11px 12px 10px; border-radius: 17px; }
+      .ritual-head { margin-bottom: 8px; }
+      .ritual-message { margin-top: 7px; font-size: 10px; }
       .bottom-info { justify-content: center; text-align: center; }
       .bottom-code { display: none; }
       .letter-overlay { padding: 8px; }
-      .letter-panel { min-height: calc(100svh - 16px); border-radius: 24px; }
+      .letter-panel { min-height: calc(100svh - 16px); border-radius: 24px; padding-bottom: calc(34px + var(--safe-bottom)); }
+      .letter-title { margin-bottom: 22px; }
+      .letter-body { font-size: 13.5px; letter-spacing: 0.03em; line-height: 1.9; }
       .cursor-glow { display: none; }
     }
 
@@ -742,6 +857,20 @@
       .eyebrow { margin-bottom: 18px; }
       .description { margin-bottom: 20px; }
       .subtitle { margin-bottom: 12px; }
+    }
+
+    @media (max-width: 760px) and (max-height: 700px) {
+      .description { display: none; }
+      .star-ritual { margin-top: 8px; padding: 9px 10px 8px; }
+      .ritual-head { margin-bottom: 5px; }
+      .ritual-star { gap: 4px; font-size: 9px; }
+      .star-core { width: 30px; height: 30px; font-size: 10px; }
+      .ritual-stars::before { top: 15px; }
+      .ritual-message { min-height: 2.8em; margin-top: 5px; font-size: 9.5px; }
+      .letter-panel { padding-top: 30px; }
+      .letter-title { margin-bottom: 17px; font-size: 34px; }
+      .letter-body { font-size: 12.5px; letter-spacing: 0.02em; line-height: 1.82; }
+      .letter-body p { margin-bottom: 0.8em; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -753,9 +882,10 @@
 <body>
   <div class="scene" id="scene">
     <canvas id="star-canvas" aria-hidden="true"></canvas>
-    <canvas id="firework-canvas" aria-label="柔神专属星空，轻触屏幕可以放烟花"></canvas>
+    <canvas id="firework-canvas" aria-label="柔神专属星空，按住或滑动屏幕可以连续放烟花"></canvas>
     <div class="vignette" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
+    <div class="light-bloom" id="light-bloom" aria-hidden="true"></div>
     <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
 
     <header class="topbar">
@@ -793,44 +923,55 @@
 
       <div class="cta-row">
         <button class="btn-main" id="ignite-button" type="button">
-          <span>为柔神点亮夜空</span>
+          <span id="ignite-label">为柔神点亮夜空</span>
           <span class="star" aria-hidden="true">✦</span>
         </button>
         <button class="btn-text" id="about-button" type="button">
-          <span>读一封星河来信</span>
+          <span>读一封写给你的信</span>
           <span aria-hidden="true">↗</span>
         </button>
       </div>
+
+      <section class="star-ritual" id="star-ritual" aria-label="点亮属于柔神的三颗星">
+        <div class="ritual-head">
+          <span>LIGHT FOR ROUSHEN</span>
+          <span class="ritual-progress" id="ritual-progress">0 / 3</span>
+        </div>
+        <div class="ritual-stars" role="group" aria-label="三颗星">
+          <button class="ritual-star" type="button" data-star="first" aria-pressed="false" aria-label="点亮初见之星">
+            <span class="star-core" aria-hidden="true">✦</span>
+            <span class="star-label">初见</span>
+          </button>
+          <button class="ritual-star" type="button" data-star="gentle" aria-pressed="false" aria-label="点亮温柔之星">
+            <span class="star-core" aria-hidden="true">✦</span>
+            <span class="star-label">温柔</span>
+          </button>
+          <button class="ritual-star" type="button" data-star="now" aria-pressed="false" aria-label="点亮此刻之星">
+            <span class="star-core" aria-hidden="true">✦</span>
+            <span class="star-label">此刻</span>
+          </button>
+        </div>
+        <p class="ritual-message" id="ritual-message" aria-live="polite">点一点星星，让它们替我说完想说的话。</p>
+        <button class="ritual-reset" id="ritual-reset" type="button">重新点亮</button>
+      </section>
     </main>
 
     <div class="bottom-info">
       <span class="hint"><span class="hint-dot" aria-hidden="true"></span>按住或滑动夜空，烟花不停</span>
-      <span class="bottom-code">NO. 1025 · MADE OF STARLIGHT</span>
+      <span class="bottom-code">NO. 1027 · STAR RITUAL</span>
     </div>
 
     <div class="letter-overlay" id="letter-overlay" aria-hidden="true">
       <article class="letter-panel" role="dialog" aria-modal="true" aria-labelledby="letter-title">
-        <button class="letter-close" id="letter-close" type="button" aria-label="关闭星河来信">×</button>
-        <p class="letter-kicker">A LETTER FROM THE STARS / 01</p>
+        <button class="letter-close" id="letter-close" type="button" aria-label="关闭写给柔神的信">×</button>
         <h2 class="letter-title" id="letter-title">给 <em>柔神</em></h2>
 
         <div class="letter-body">
-          <p>他们说，温柔的人像月光。</p>
-          <p class="accent">可我觉得，你更像一颗有自己轨道的星。<br />不借谁的光，也不为谁熄灭。</p>
-          <p>柔，是你给世界的温度。<br />神，是你成为自己的那束光。</p>
-          <p>所以我把这场烟火留在这里。<br />它不庆祝节日，只庆祝你的存在。</p>
-        </div>
-
-        <div class="whisper-nav" aria-label="三种星光寄语">
-          <button class="whisper-btn is-active" type="button" data-whisper="gentle">温柔</button>
-          <button class="whisper-btn" type="button" data-whisper="free">自由</button>
-          <button class="whisper-btn" type="button" data-whisper="shine">耀眼</button>
-        </div>
-        <p class="whisper-output" id="whisper-output" aria-live="polite">不是所有柔软都容易被看见，但它一直在发光。</p>
-
-        <div class="letter-signature">
-          <span>愿你所见皆温柔<br />所行皆坦荡</span>
-          <span class="signature-symbol" aria-hidden="true">✦</span>
+          <p>之前说过给你也写个感谢信，不知道你还记不记得，我写字很难看，文化也不高，将就看一下吧。</p>
+          <p>从我个人角度来说，我觉得你蛮好的，挺完美的，不管是美貌、声音、性格或者三观都很好，所以你完全可以更自信一点，而且你完全可以被真心对待。</p>
+          <p>我没有答应过别人什么要求，但是既然答应了，就要做到。我也不是什么有钱人，只不过在做我力所能及的范围内的事，虽然不知道还能在你的生活中停留多久，但是既然还在停留中，那就做好我的事情。</p>
+          <p>因为我也知道一些事情，所以做有点二杯了，但是我这个人就是这样的，很笨的事情，我也会做，我觉得应该是有一点点的意思，哪怕微乎其微。</p>
+          <p>每个人的生命中会有很多过客，除了自己都是过客，那为什么还要相遇？为什么相遇还要相识？结局注定是分离还有什么意义？我觉得有，每个人都是不同的个体，所以相遇相识都会有不同的感受和经历，所以我觉得哪怕最后一定会分开，相遇的意义就是被你改变的那部分我，代替你陪在了我身边。</p>
         </div>
       </article>
     </div>
@@ -843,18 +984,24 @@
     (() => {
       "use strict";
 
+      const scene = document.getElementById("scene");
       const starCanvas = document.getElementById("star-canvas");
       const fireworkCanvas = document.getElementById("firework-canvas");
       const cursorGlow = document.getElementById("cursor-glow");
+      const lightBloom = document.getElementById("light-bloom");
       const letterOverlay = document.getElementById("letter-overlay");
       const letterClose = document.getElementById("letter-close");
       const aboutButton = document.getElementById("about-button");
       const igniteButton = document.getElementById("ignite-button");
+      const igniteLabel = document.getElementById("ignite-label");
+      const starRitual = document.getElementById("star-ritual");
+      const ritualButtons = Array.from(document.querySelectorAll(".ritual-star"));
+      const ritualProgress = document.getElementById("ritual-progress");
+      const ritualMessage = document.getElementById("ritual-message");
+      const ritualReset = document.getElementById("ritual-reset");
       const shareButton = document.getElementById("share-button");
       const soundButton = document.getElementById("sound-button");
       const soundLabel = document.getElementById("sound-label");
-      const whisperOutput = document.getElementById("whisper-output");
-      const whisperButtons = Array.from(document.querySelectorAll(".whisper-btn"));
       const toast = document.getElementById("toast");
       const curtain = document.getElementById("curtain");
       const homeMark = document.getElementById("home-mark");
@@ -885,6 +1032,15 @@
       let lastContinuousEmit = 0;
       let pointerBurstUntil = 0;
       let lastBoomAt = 0;
+      let celebrationTimer = 0;
+      let lightBloomTimer = 0;
+      let igniteLabelTimer = 0;
+      let ambientGain = null;
+      let ambientVoices = [];
+      let ambientChimeTimer = 0;
+      const litStars = new Set();
+      let ritualFinaleAnnounced = false;
+      const ritualStorageKey = "roushen-ritual-v1";
 
       const palette = [
         [255, 232, 237],
@@ -895,11 +1051,27 @@
         [255, 248, 239]
       ];
 
-      const whisperCopy = {
-        gentle: "不是所有柔软都容易被看见，但它一直在发光。",
-        free: "愿你永远拥有选择自己轨道的权利，不追赶，也不将就。",
-        shine: "不用成为谁的标准答案，你本身就是独一份的光。"
+      const ritualCopy = {
+        first: {
+          message: "有些名字，一出现就像星光落在心上。",
+          firework: "ring",
+          colors: [[255, 184, 208], [255, 248, 239]],
+          tone: 659.25
+        },
+        gentle: {
+          message: "你让世界慢下来，也让平凡有了温度。",
+          firework: "heart",
+          colors: [[185, 201, 255], [255, 238, 244]],
+          tone: 783.99
+        },
+        now: {
+          message: "愿这一刻的星河，记得柔神。",
+          firework: "willow",
+          colors: [[248, 220, 174], [255, 184, 208]],
+          tone: 987.77
+        }
       };
+
 
       function random(min, max) {
         return min + Math.random() * (max - min);
@@ -1244,11 +1416,14 @@
         }, delay);
       }
 
-      function showToast(message) {
+      function showToast(message, duration = 2200, isBlessing = false) {
         window.clearTimeout(toastTimer);
         toast.textContent = message;
+        toast.classList.toggle("is-blessing", isBlessing);
         toast.classList.add("is-visible");
-        toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 2200);
+        toastTimer = window.setTimeout(() => {
+          toast.classList.remove("is-visible", "is-blessing");
+        }, duration);
       }
 
       function ensureAudio() {
@@ -1308,6 +1483,79 @@
         playTone(isHeart ? 1567.98 : 1174.66, 0.62, 0.012, 0.11);
       }
 
+      function scheduleAmbientChime() {
+        window.clearTimeout(ambientChimeTimer);
+        if (!soundEnabled) return;
+        ambientChimeTimer = window.setTimeout(() => {
+          if (soundEnabled && audioContext && audioContext.state === "running") {
+            const notes = [1046.5, 1174.66, 1318.51, 1567.98];
+            playTone(choose(notes), 1.8, 0.0032);
+          }
+          scheduleAmbientChime();
+        }, random(7500, 12500));
+      }
+
+      function startAmbient() {
+        if (!soundEnabled || !ensureAudio() || ambientVoices.length) return;
+        const now = audioContext.currentTime;
+        ambientGain = audioContext.createGain();
+        ambientGain.gain.setValueAtTime(0.0001, now);
+        ambientGain.gain.exponentialRampToValueAtTime(0.022, now + 2.4);
+        ambientGain.connect(audioContext.destination);
+
+        [
+          { frequency: 110, type: "sine", gain: 0.22 },
+          { frequency: 164.81, type: "sine", gain: 0.14 },
+          { frequency: 220, type: "triangle", gain: 0.07 }
+        ].forEach((voice) => {
+          const oscillator = audioContext.createOscillator();
+          const voiceGain = audioContext.createGain();
+          oscillator.type = voice.type;
+          oscillator.frequency.value = voice.frequency;
+          voiceGain.gain.value = voice.gain;
+          oscillator.connect(voiceGain);
+          voiceGain.connect(ambientGain);
+          oscillator.start();
+          ambientVoices.push(oscillator);
+        });
+
+        scheduleAmbientChime();
+      }
+
+      function stopAmbient(immediate = false) {
+        window.clearTimeout(ambientChimeTimer);
+        ambientChimeTimer = 0;
+        if (!ambientGain || !audioContext || audioContext.state === "closed") {
+          ambientVoices = [];
+          ambientGain = null;
+          return;
+        }
+
+        const voices = ambientVoices.slice();
+        const gainNode = ambientGain;
+        ambientVoices = [];
+        ambientGain = null;
+
+        if (immediate) {
+          voices.forEach((voice) => {
+            try { voice.stop(); } catch (error) { /* already stopped */ }
+          });
+          try { gainNode.disconnect(); } catch (error) { /* already disconnected */ }
+          return;
+        }
+
+        const now = audioContext.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setValueAtTime(Math.max(gainNode.gain.value, 0.0001), now);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+        window.setTimeout(() => {
+          voices.forEach((voice) => {
+            try { voice.stop(); } catch (error) { /* already stopped */ }
+          });
+          try { gainNode.disconnect(); } catch (error) { /* already disconnected */ }
+        }, 780);
+      }
+
       function burstHeart() {
         const x = viewportWidth < 700 ? viewportWidth * 0.5 : viewportWidth * 0.67;
         const y = viewportHeight < 700 ? viewportHeight * 0.31 : viewportHeight * 0.32;
@@ -1320,26 +1568,231 @@
         });
       }
 
+      function playCelebrationChord() {
+        if (!soundEnabled || !ensureAudio()) return;
+        [523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((frequency, index) => {
+          playTone(frequency, 1.15, 0.011 + index * 0.0015, index * 0.09);
+        });
+      }
+
+      function triggerVisualCelebration(duration = 2300, bloomDuration = 1500) {
+        window.clearTimeout(celebrationTimer);
+        window.clearTimeout(lightBloomTimer);
+        scene.classList.remove("is-celebrating");
+        lightBloom.classList.remove("is-active");
+        void scene.offsetWidth;
+        scene.classList.add("is-celebrating");
+        lightBloom.classList.add("is-active");
+        celebrationTimer = window.setTimeout(() => scene.classList.remove("is-celebrating"), duration);
+        lightBloomTimer = window.setTimeout(() => lightBloom.classList.remove("is-active"), bloomDuration);
+      }
+
       function igniteSky() {
         hasInteracted = true;
-        burstHeart();
-        window.setTimeout(() => {
-          launchRocket(viewportWidth * 0.27, viewportHeight * 0.24, {
-            type: "ring",
-            size: 0.8,
-            count: viewportWidth < 600 ? 52 : 76,
-            colors: [[185, 201, 255], [255, 238, 220]]
+
+        const buttonRect = igniteButton.getBoundingClientRect();
+        const buttonX = buttonRect.left + buttonRect.width / 2;
+        const buttonY = buttonRect.top + buttonRect.height / 2;
+        explode(buttonX, buttonY, "ring", [[255, 248, 239], [255, 184, 208]], viewportWidth < 600 ? 32 : 52, 0.64);
+
+        const pink = [[255, 184, 208], [255, 232, 218]];
+        const ice = [[185, 201, 255], [255, 248, 239]];
+        const gold = [[248, 220, 174], [255, 177, 205]];
+        const lavender = [[207, 177, 255], [255, 238, 244]];
+        const bursts = [
+          { delay: 0,    x: 0.67, y: 0.27, type: "heart",  size: 1.45, count: 150, colors: pink,     duration: 900 },
+          { delay: 170,  x: 0.20, y: 0.23, type: "ring",   size: 1.00, count: 110, colors: ice,      duration: 820 },
+          { delay: 340,  x: 0.82, y: 0.31, type: "willow", size: 0.98, count: 118, colors: gold,     duration: 900 },
+          { delay: 520,  x: 0.34, y: 0.12, type: "peony",  size: 0.92, count: 98,  colors: pink,     duration: 760 },
+          { delay: 700,  x: 0.74, y: 0.14, type: "ring",   size: 0.90, count: 96,  colors: lavender, duration: 800 },
+          { delay: 880,  x: 0.13, y: 0.40, type: "heart",  size: 0.80, count: 90,  colors: pink,     duration: 760 },
+          { delay: 1060, x: 0.90, y: 0.45, type: "peony",  size: 0.80, count: 86,  colors: gold,     duration: 760 },
+          { delay: 1280, x: 0.50, y: 0.17, type: "ring",   size: 0.86, count: 98,  colors: ice,      duration: 800 },
+          { delay: 1510, x: 0.63, y: 0.39, type: "willow", size: 0.78, count: 86,  colors: gold,     duration: 840 },
+          { delay: 1780, x: 0.30, y: 0.31, type: "heart",  size: 0.74, count: 78,  colors: pink,     duration: 760 }
+        ];
+
+        const mobileScale = viewportWidth < 600 ? 0.62 : 1;
+        const sequence = reduceMotion ? bursts.slice(0, 3) : bursts;
+        sequence.forEach((burst) => {
+          window.setTimeout(() => {
+            launchRocket(viewportWidth * burst.x, viewportHeight * burst.y, {
+              type: burst.type,
+              size: burst.size,
+              count: Math.round(burst.count * mobileScale),
+              colors: burst.colors,
+              duration: burst.duration
+            });
+          }, burst.delay);
+        });
+
+        if (!reduceMotion) {
+          [180, 620, 1120, 1580].forEach((delay) => {
+            window.setTimeout(spawnShootingStar, delay);
           });
-        }, 280);
+        }
+
+        triggerVisualCelebration(2300, 1500);
+        playCelebrationChord();
+        showToast("愿这片星河，为柔神一直亮着。", 3600, true);
+
+        window.clearTimeout(igniteLabelTimer);
+        igniteButton.classList.add("is-igniting");
+        igniteLabel.textContent = "星河正在绽放";
+        igniteLabelTimer = window.setTimeout(() => {
+          igniteButton.classList.remove("is-igniting");
+          igniteLabel.textContent = "为柔神点亮夜空";
+        }, 2100);
+      }
+
+      function saveRitualState() {
+        try {
+          window.localStorage.setItem(ritualStorageKey, JSON.stringify(Array.from(litStars)));
+        } catch (error) {
+          /* Local storage can be unavailable in private or embedded browsers. */
+        }
+      }
+
+      function loadRitualState() {
+        try {
+          const saved = JSON.parse(window.localStorage.getItem(ritualStorageKey) || "[]");
+          return Array.isArray(saved) ? saved.filter((key) => ritualCopy[key]) : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function setRitualMessage(message) {
+        ritualMessage.classList.add("is-changing");
         window.setTimeout(() => {
-          launchRocket(viewportWidth * 0.78, viewportHeight * 0.37, {
-            type: "willow",
-            size: 0.76,
-            count: viewportWidth < 600 ? 52 : 74,
-            colors: [[248, 220, 174], [255, 177, 205]]
+          ritualMessage.textContent = message;
+          ritualMessage.classList.remove("is-changing");
+        }, 140);
+      }
+
+      function updateRitualUI() {
+        ritualProgress.textContent = litStars.size + " / 3";
+        ritualButtons.forEach((button) => {
+          const isLit = litStars.has(button.dataset.star);
+          button.classList.toggle("is-lit", isLit);
+          button.setAttribute("aria-pressed", String(isLit));
+        });
+        const complete = litStars.size === 3;
+        starRitual.classList.toggle("is-complete", complete);
+        aboutButton.classList.toggle("is-ready", complete);
+      }
+
+      function launchRitualFinale() {
+        triggerVisualCelebration(3800, 2400);
+        playCelebrationChord();
+
+        const pink = [[255, 184, 208], [255, 239, 227]];
+        const ice = [[185, 201, 255], [255, 248, 239]];
+        const gold = [[248, 220, 174], [255, 184, 208]];
+        const lavender = [[207, 177, 255], [255, 238, 244]];
+        const bursts = [
+          { delay: 0,    x: 0.50, y: 0.25, type: "heart",  size: 1.55, count: 160, colors: pink,     duration: 920 },
+          { delay: 150,  x: 0.18, y: 0.20, type: "ring",   size: 1.15, count: 120, colors: ice,      duration: 860 },
+          { delay: 310,  x: 0.82, y: 0.22, type: "ring",   size: 1.10, count: 115, colors: lavender, duration: 860 },
+          { delay: 480,  x: 0.30, y: 0.12, type: "willow", size: 1.00, count: 108, colors: gold,     duration: 900 },
+          { delay: 650,  x: 0.72, y: 0.14, type: "willow", size: 0.96, count: 104, colors: pink,     duration: 900 },
+          { delay: 820,  x: 0.10, y: 0.40, type: "peony",  size: 0.90, count: 98,  colors: lavender, duration: 780 },
+          { delay: 980,  x: 0.90, y: 0.42, type: "peony",  size: 0.90, count: 98,  colors: gold,     duration: 780 },
+          { delay: 1160, x: 0.50, y: 0.17, type: "ring",   size: 0.95, count: 106, colors: ice,      duration: 820 },
+          { delay: 1350, x: 0.35, y: 0.32, type: "heart",  size: 0.85, count: 96,  colors: pink,     duration: 800 },
+          { delay: 1520, x: 0.65, y: 0.34, type: "heart",  size: 0.85, count: 96,  colors: pink,     duration: 800 },
+          { delay: 1780, x: 0.50, y: 0.28, type: "heart",  size: 1.25, count: 140, colors: pink,     duration: 920 }
+        ];
+
+        const mobileScale = viewportWidth < 600 ? 0.58 : 1;
+        const sequence = reduceMotion ? bursts.slice(0, 4) : bursts;
+        sequence.forEach((burst) => {
+          window.setTimeout(() => {
+            launchRocket(viewportWidth * burst.x, viewportHeight * burst.y, {
+              type: burst.type,
+              size: burst.size,
+              count: Math.round(burst.count * mobileScale),
+              colors: burst.colors,
+              duration: burst.duration
+            });
+          }, burst.delay);
+        });
+
+        if (!reduceMotion) {
+          [120, 460, 820, 1180, 1560, 1940].forEach((delay) => {
+            window.setTimeout(spawnShootingStar, delay);
           });
-        }, 600);
-        showToast("这一束光，送给柔神");
+        }
+
+        showToast("三颗星已亮，愿柔神一直被温柔以待。", 5600, true);
+      }
+
+      function completeRitual() {
+        if (ritualFinaleAnnounced) return;
+        ritualFinaleAnnounced = true;
+        updateRitualUI();
+        setRitualMessage("三颗星都亮了。愿柔神一直被温柔以待。");
+        launchRitualFinale();
+      }
+
+      function handleRitualStar(key) {
+        const copy = ritualCopy[key];
+        if (!copy) return;
+        const isNew = !litStars.has(key);
+        hasInteracted = true;
+
+        if (isNew) {
+          litStars.add(key);
+          saveRitualState();
+          updateRitualUI();
+        }
+
+        setRitualMessage(copy.message);
+
+        const button = ritualButtons.find((item) => item.dataset.star === key);
+        if (button) {
+          const rect = button.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          explode(x, y, "ring", copy.colors, viewportWidth < 600 ? 28 : 42, 0.58);
+          launchRocket(x, viewportHeight * 0.23, {
+            type: copy.firework,
+            size: 0.82,
+            count: viewportWidth < 600 ? 50 : 72,
+            colors: copy.colors,
+            duration: 760
+          });
+        }
+
+        if (soundEnabled) {
+          ensureAudio();
+          playTone(copy.tone, 0.85, 0.011);
+          playTone(copy.tone * 1.5, 1.05, 0.006, 0.08);
+        }
+
+        if (navigator.vibrate) navigator.vibrate(12);
+
+        if (isNew && litStars.size === 3) {
+          window.setTimeout(completeRitual, 650);
+        }
+      }
+
+      function restoreRitual() {
+        loadRitualState().forEach((key) => litStars.add(key));
+        updateRitualUI();
+        if (litStars.size === 3) {
+          ritualFinaleAnnounced = true;
+          ritualMessage.textContent = "三颗星都亮了。愿柔神一直被温柔以待。";
+        }
+      }
+
+      function resetRitual() {
+        litStars.clear();
+        ritualFinaleAnnounced = false;
+        saveRitualState();
+        updateRitualUI();
+        setRitualMessage("点一点星星，让它们替我说完想说的话。");
+        showToast("三颗星已回到夜空");
       }
 
       function openLetter() {
@@ -1365,10 +1818,12 @@
 
         if (soundEnabled) {
           ensureAudio();
+          startAmbient();
           playTone(523.25, 0.75, 0.018);
           playTone(783.99, 0.9, 0.012, 0.08);
-          showToast("声音已开启");
+          showToast("环境音与烟花声已开启");
         } else {
+          stopAmbient();
           showToast("声音已关闭");
         }
       }
@@ -1402,15 +1857,6 @@
         }
       }
 
-      function updateWhisper(key, button) {
-        whisperButtons.forEach((item) => item.classList.remove("is-active"));
-        button.classList.add("is-active");
-        whisperOutput.classList.add("is-changing");
-        window.setTimeout(() => {
-          whisperOutput.textContent = whisperCopy[key];
-          whisperOutput.classList.remove("is-changing");
-        }, 160);
-      }
 
       function emitPointerFirework(x, y, strong) {
         launchRocket(x, clamp(y, 70, viewportHeight * 0.72), {
@@ -1466,6 +1912,7 @@
       }
 
       function cleanupAudio() {
+        stopAmbient(true);
         if (audioContext && audioContext.state !== "closed") {
           audioContext.close();
           audioContext = null;
@@ -1503,17 +1950,16 @@
       letterClose.addEventListener("click", closeLetter);
       shareButton.addEventListener("click", sharePage);
       soundButton.addEventListener("click", toggleSound);
+      ritualButtons.forEach((button) => {
+        button.addEventListener("click", () => handleRitualStar(button.dataset.star));
+      });
+      ritualReset.addEventListener("click", resetRitual);
 
       letterOverlay.addEventListener("click", (event) => {
         if (event.target === letterOverlay) closeLetter();
       });
 
-      whisperButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          updateWhisper(button.dataset.whisper, button);
-          if (soundEnabled) playTone(659.25, 0.45, 0.012);
-        });
-      });
+      restoreRitual();
 
       document.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && letterOverlay.classList.contains("is-open")) closeLetter();
