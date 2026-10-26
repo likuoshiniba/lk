@@ -366,6 +366,8 @@
       line-height: 0.82;
       text-indent: -0.1em;
       filter: drop-shadow(0 10px 45px rgba(255, 182, 206, 0.09));
+      cursor: pointer;
+      pointer-events: auto;
       opacity: 0;
       transform: translateY(22px) scale(0.985);
       animation: title-in 1.4s 620ms cubic-bezier(.16, .84, .26, 1) forwards;
@@ -877,6 +879,398 @@
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
       .orbit { display: none; }
     }
+
+    .secondary-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wish-overlay {
+      position: fixed;
+      z-index: 31;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(3, 3, 8, 0);
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+      visibility: hidden;
+      transition: background 420ms ease, backdrop-filter 420ms ease, visibility 420ms;
+    }
+
+    .wish-overlay.is-open {
+      visibility: visible;
+      background: rgba(3, 3, 8, 0.58);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .wish-panel {
+      position: relative;
+      width: min(100%, 450px);
+      padding: 36px 28px 24px;
+      border: 1px solid rgba(255, 240, 232, 0.15);
+      border-radius: 27px;
+      background:
+        radial-gradient(circle at 78% 8%, rgba(255, 185, 208, 0.14), transparent 28%),
+        radial-gradient(circle at 12% 82%, rgba(139, 154, 236, 0.12), transparent 34%),
+        rgba(10, 9, 18, 0.92);
+      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      opacity: 0;
+      transform: translateY(18px) scale(0.98);
+      transition: opacity 380ms ease, transform 480ms cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .wish-overlay.is-open .wish-panel { opacity: 1; transform: translateY(0) scale(1); }
+    .wish-kicker { margin: 0 0 15px; color: rgba(255, 248, 242, 0.35); font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: 9px; letter-spacing: 0.3em; }
+    .wish-title { margin: 0 0 12px; font-size: clamp(31px, 6vw, 46px); font-weight: 400; letter-spacing: -0.055em; line-height: 1.15; }
+    .wish-hint { margin: 0 0 20px; color: rgba(255, 248, 242, 0.5); font-size: 11px; letter-spacing: 0.06em; line-height: 1.8; }
+    .wish-input {
+      display: block;
+      width: 100%;
+      min-height: 126px;
+      padding: 15px 16px;
+      resize: none;
+      border: 1px solid rgba(255, 244, 235, 0.14);
+      border-radius: 16px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.035);
+      color: rgba(255, 248, 242, 0.92);
+      font-family: "Songti SC", "STSong", "SimSun", serif;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      line-height: 1.8;
+      transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+    }
+    .wish-input::placeholder { color: rgba(255, 248, 242, 0.26); }
+    .wish-input:focus { border-color: rgba(255, 202, 218, 0.44); background: rgba(255, 255, 255, 0.055); box-shadow: 0 0 0 3px rgba(255, 184, 208, 0.06); }
+    .wish-input-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 13px; }
+    .wish-count { color: rgba(255, 248, 242, 0.3); font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: 9px; letter-spacing: 0.12em; }
+    .wish-submit {
+      min-height: 43px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 220, 227, 0.4);
+      border-radius: 999px;
+      background: rgba(255, 184, 208, 0.12);
+      cursor: pointer;
+      color: rgba(255, 248, 242, 0.94);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      transition: background 220ms ease, border-color 220ms ease, transform 220ms ease;
+    }
+    .wish-submit:hover { border-color: rgba(255, 232, 237, 0.68); background: rgba(255, 184, 208, 0.2); transform: translateY(-1px); }
+    .wish-flight-layer { position: fixed; z-index: 36; inset: 0; pointer-events: none; }
+    .wish-flight {
+      position: absolute;
+      max-width: min(78vw, 360px);
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 220, 228, 0.34);
+      border-radius: 999px;
+      background: rgba(22, 17, 29, 0.84);
+      box-shadow: 0 0 26px rgba(255, 184, 208, 0.2);
+      color: rgba(255, 248, 242, 0.94);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      line-height: 1.5;
+      text-align: center;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity, filter;
+    }
+    .wish-stars-layer {
+      position: fixed;
+      z-index: 11;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .wish-star {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 600ms ease;
+    }
+    .wish-star.is-visible { opacity: 1; pointer-events: auto; }
+    .wish-star-core {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-items: center;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #ffd9e4 22%, rgba(255, 184, 208, 0.35) 48%, transparent 72%);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 9px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 17px rgba(255, 184, 208, 0.66), 0 0 44px rgba(255, 184, 208, 0.24);
+      animation: wish-pulse 2.8s ease-in-out infinite;
+    }
+    @keyframes wish-pulse { 0%, 100% { transform: scale(0.88); opacity: 0.7; } 50% { transform: scale(1.18); opacity: 1; } }
+    .wish-star:focus-visible .wish-star-core { outline: 1px solid rgba(255, 248, 242, 0.8); outline-offset: 5px; }
+    .wish-star-bubble {
+      position: absolute;
+      bottom: 13px;
+      left: 17px;
+      width: max-content;
+      max-width: min(260px, 68vw);
+      padding: 10px 13px;
+      border: 1px solid rgba(255, 234, 228, 0.16);
+      border-radius: 12px;
+      background: rgba(13, 11, 20, 0.88);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+      color: rgba(255, 248, 242, 0.82);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      line-height: 1.65;
+      text-align: left;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(5px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+    .wish-star.is-right .wish-star-bubble { right: 17px; left: auto; text-align: right; }
+    .wish-star.is-open .wish-star-bubble { opacity: 1; transform: translateY(0); }
+
+    .secret-overlay {
+      position: fixed;
+      z-index: 18;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: radial-gradient(circle at 50% 44%, rgba(8, 7, 15, 0.24), rgba(3, 3, 8, 0.74));
+      pointer-events: none;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 500ms ease, visibility 500ms;
+    }
+    .secret-overlay.is-open { visibility: visible; opacity: 1; }
+    .secret-card {
+      max-width: min(90vw, 560px);
+      padding: 25px 30px;
+      border: 1px solid rgba(255, 219, 227, 0.24);
+      border-radius: 22px;
+      background: rgba(15, 12, 23, 0.72);
+      box-shadow: 0 0 70px rgba(255, 184, 208, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      text-align: center;
+      transform: translateY(16px) scale(0.96);
+      transition: transform 650ms cubic-bezier(.18, .8, .2, 1);
+    }
+    .secret-overlay.is-open .secret-card { transform: translateY(0) scale(1); }
+    .secret-symbol { display: block; margin-bottom: 12px; color: var(--rose); font-size: 17px; text-shadow: 0 0 18px rgba(255, 184, 208, 0.8); }
+    .secret-copy { margin: 0; color: rgba(255, 248, 242, 0.9); font-size: clamp(14px, 2vw, 18px); letter-spacing: 0.12em; line-height: 1.9; }
+
+    .heart-constellation {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 50%;
+      width: 64%;
+      max-width: 470px;
+      height: auto;
+      opacity: 0;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(255, 184, 208, 0.32));
+      transform: translate(-50%, -50%) scale(0.94);
+      transition: opacity 700ms ease, transform 900ms cubic-bezier(.2, .8, .2, 1);
+    }
+    .heart-constellation path {
+      fill: none;
+      stroke: rgba(255, 214, 225, 0.7);
+      stroke-width: 1.1;
+      stroke-dasharray: 470;
+      stroke-dashoffset: 470;
+      transition: stroke-dashoffset 2.1s ease 120ms;
+    }
+    .heart-constellation circle { fill: #fff8f2; opacity: 0; filter: drop-shadow(0 0 4px rgba(255, 198, 216, 0.95)); transition: opacity 480ms ease; }
+    .heart-constellation circle:nth-of-type(2) { transition-delay: 260ms; }
+    .heart-constellation circle:nth-of-type(3) { transition-delay: 520ms; }
+    .heart-constellation circle:nth-of-type(4) { transition-delay: 780ms; }
+    .heart-constellation circle:nth-of-type(5) { transition-delay: 1040ms; }
+    .heart-constellation circle:nth-of-type(6) { transition-delay: 1300ms; }
+    .scene.is-easter-egg .heart-constellation { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .scene.is-easter-egg .heart-constellation path { stroke-dashoffset: 0; }
+    .scene.is-easter-egg .heart-constellation circle { opacity: 1; }
+
+    @media (max-width: 760px) {
+      .secondary-actions { gap: 4px 10px; }
+      .secondary-actions .btn-text { min-height: 30px; font-size: 10px; }
+      .wish-panel { padding: 32px 20px 20px; border-radius: 23px; }
+      .wish-input { min-height: 112px; font-size: 14px; }
+      .secret-card { padding: 21px 20px; border-radius: 18px; }
+    }
+
+    .scene.theme-dusk {
+      background:
+        radial-gradient(circle at 50% 40%, rgba(94, 61, 133, 0.22), transparent 30%),
+        radial-gradient(circle at 14% 16%, rgba(72, 87, 162, 0.22), transparent 36%),
+        radial-gradient(circle at 89% 73%, rgba(177, 75, 117, 0.2), transparent 38%),
+        linear-gradient(155deg, #100a1a 0%, #080611 46%, #160a13 100%);
+    }
+    .scene.theme-night {
+      background:
+        radial-gradient(circle at 50% 42%, rgba(47, 59, 108, 0.18), transparent 29%),
+        radial-gradient(circle at 15% 14%, rgba(56, 77, 132, 0.2), transparent 36%),
+        radial-gradient(circle at 90% 75%, rgba(83, 64, 112, 0.16), transparent 38%),
+        linear-gradient(155deg, #050812 0%, #03050c 46%, #08070d 100%);
+    }
+    .scene.theme-dawn {
+      background:
+        radial-gradient(circle at 50% 38%, rgba(82, 83, 150, 0.2), transparent 30%),
+        radial-gradient(circle at 12% 18%, rgba(53, 77, 128, 0.2), transparent 36%),
+        radial-gradient(circle at 90% 76%, rgba(161, 111, 91, 0.15), transparent 38%),
+        linear-gradient(155deg, #07111d 0%, #0b0c19 46%, #18100f 100%);
+    }
+    .scene.theme-day {
+      background:
+        radial-gradient(circle at 50% 40%, rgba(66, 100, 143, 0.2), transparent 31%),
+        radial-gradient(circle at 14% 14%, rgba(54, 105, 145, 0.2), transparent 37%),
+        radial-gradient(circle at 90% 72%, rgba(171, 134, 92, 0.14), transparent 40%),
+        linear-gradient(155deg, #07131d 0%, #07101a 46%, #101319 100%);
+    }
+    .scene.theme-dusk::before { background: radial-gradient(circle, rgba(125, 82, 214, 0.7), rgba(72, 45, 120, 0.2) 47%, transparent 72%); }
+    .scene.theme-dusk::after { background: radial-gradient(circle, rgba(210, 101, 150, 0.54), rgba(87, 42, 84, 0.18) 48%, transparent 72%); }
+    .scene.theme-night::before { background: radial-gradient(circle, rgba(69, 92, 166, 0.65), rgba(40, 50, 95, 0.16) 48%, transparent 72%); }
+    .scene.theme-night::after { background: radial-gradient(circle, rgba(120, 119, 159, 0.38), rgba(48, 42, 74, 0.14) 48%, transparent 72%); }
+    .scene.theme-dawn::before { background: radial-gradient(circle, rgba(87, 100, 188, 0.62), rgba(48, 52, 108, 0.17) 48%, transparent 72%); }
+    .scene.theme-dawn::after { background: radial-gradient(circle, rgba(207, 145, 108, 0.4), rgba(92, 55, 67, 0.15) 48%, transparent 72%); }
+    .scene.theme-day::before { background: radial-gradient(circle, rgba(90, 142, 191, 0.58), rgba(44, 73, 103, 0.16) 48%, transparent 72%); }
+    .scene.theme-day::after { background: radial-gradient(circle, rgba(203, 166, 108, 0.32), rgba(83, 67, 59, 0.12) 48%, transparent 72%); }
+
+    .memory-overlay {
+      position: fixed;
+      z-index: 32;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(3, 3, 8, 0);
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+      visibility: hidden;
+      transition: background 480ms ease, backdrop-filter 480ms ease, visibility 480ms;
+    }
+    .memory-overlay.is-open {
+      visibility: visible;
+      background: rgba(3, 3, 8, 0.64);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .memory-panel {
+      position: relative;
+      overflow: auto;
+      width: min(100%, 920px);
+      max-height: calc(100svh - 36px);
+      padding: 38px clamp(20px, 4vw, 44px) 30px;
+      border: 1px solid rgba(255, 240, 232, 0.14);
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 80% 6%, rgba(255, 185, 208, 0.12), transparent 30%),
+        radial-gradient(circle at 10% 92%, rgba(137, 151, 231, 0.1), transparent 34%),
+        rgba(10, 9, 18, 0.93);
+      box-shadow: 0 28px 100px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      opacity: 0;
+      transform: translateY(20px) scale(0.985);
+      transition: opacity 420ms ease, transform 560ms cubic-bezier(.18, .8, .2, 1);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+    }
+    .memory-overlay.is-open .memory-panel { opacity: 1; transform: translateY(0) scale(1); }
+    .memory-kicker { margin: 0 0 17px; color: rgba(255, 248, 242, 0.34); font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: 9px; letter-spacing: 0.3em; }
+    .memory-title { margin: 0 0 12px; font-size: clamp(38px, 7vw, 68px); font-weight: 400; letter-spacing: -0.065em; line-height: 1; }
+    .memory-lead { margin: 0 0 26px; color: rgba(255, 248, 242, 0.5); font-size: 12px; letter-spacing: 0.08em; line-height: 1.8; }
+    .memory-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .memory-card { min-width: 0; }
+    .memory-open {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid rgba(255, 244, 235, 0.12);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.025);
+      cursor: pointer;
+      color: inherit;
+      text-align: left;
+      transition: border-color 260ms ease, transform 260ms ease, box-shadow 260ms ease;
+    }
+    .memory-open:hover { border-color: rgba(255, 210, 222, 0.32); transform: translateY(-3px); box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18); }
+    .memory-visual { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; background:
+      radial-gradient(circle at 36% 30%, rgba(255, 210, 222, 0.14), transparent 30%),
+      radial-gradient(circle at 70% 72%, rgba(185, 201, 255, 0.1), transparent 32%),
+      linear-gradient(145deg, #171321, #0d0b14);
+    }
+    .memory-visual::after { position: absolute; inset: 0; border: 1px solid rgba(255, 255, 255, 0.035); border-radius: inherit; content: ""; pointer-events: none; }
+    .memory-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .memory-image[hidden] { display: none; }
+    .memory-placeholder { display: flex; position: relative; z-index: 1; align-items: center; flex-direction: column; gap: 8px; color: rgba(255, 216, 226, 0.45); font-size: 26px; text-shadow: 0 0 22px rgba(255, 184, 208, 0.3); }
+    .memory-placeholder small { color: rgba(255, 248, 242, 0.3); font-size: 9px; letter-spacing: 0.13em; }
+    .memory-meta { display: flex; flex-direction: column; gap: 6px; padding: 13px 14px 15px; }
+    .memory-meta span { color: rgba(255, 248, 242, 0.32); font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: 8px; letter-spacing: 0.2em; }
+    .memory-meta strong { color: rgba(255, 248, 242, 0.82); font-size: 13px; font-weight: 400; letter-spacing: 0.06em; line-height: 1.5; }
+    .memory-upload { display: block; margin-top: 8px; text-align: center; color: rgba(255, 248, 242, 0.35); font-size: 9px; letter-spacing: 0.12em; cursor: pointer; transition: color 200ms ease; }
+    .memory-upload:hover { color: rgba(255, 248, 242, 0.72); }
+    .memory-upload input { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
+    .memory-note { margin: 20px 0 0; color: rgba(255, 248, 242, 0.25); font-size: 9px; letter-spacing: 0.08em; line-height: 1.7; text-align: center; }
+    .memory-detail {
+      position: fixed;
+      z-index: 35;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(2, 2, 7, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 380ms ease, visibility 380ms;
+    }
+    .memory-detail.is-open { visibility: visible; opacity: 1; }
+    .memory-detail figure { width: min(920px, 92vw); margin: 0; }
+    .memory-detail img { display: block; width: 100%; max-height: 68svh; border-radius: 20px; object-fit: contain; box-shadow: 0 30px 100px rgba(0, 0, 0, 0.46); transition: opacity 420ms ease, filter 520ms ease, transform 520ms ease; }
+    .memory-detail figcaption { display: flex; align-items: baseline; gap: 16px; margin-top: 18px; color: rgba(255, 248, 242, 0.72); }
+    .memory-detail figcaption span { color: var(--rose); font-family: "Avenir Next Condensed", "Arial Narrow", sans-serif; font-size: 9px; letter-spacing: 0.2em; }
+    .memory-detail figcaption p { margin: 0; font-size: 14px; letter-spacing: 0.08em; line-height: 1.7; }
+    .memory-detail.is-dissolving img { opacity: 0; filter: blur(16px); transform: scale(1.035); }
+    .memory-detail-close { position: absolute; z-index: 2; top: 20px; right: 22px; }
+
+    @media (max-width: 760px) {
+      .memory-overlay { padding: 8px; }
+      .memory-panel { max-height: calc(100svh - 16px); padding: 32px 16px 24px; border-radius: 23px; }
+      .memory-grid { grid-template-columns: 1fr; }
+      .memory-lead { margin-bottom: 20px; }
+      .memory-card { max-width: 100%; }
+      .memory-visual { aspect-ratio: 16 / 10; }
+      .memory-meta { padding: 12px 13px 14px; }
+      .memory-detail { padding: 12px; }
+      .memory-detail figure { width: 94vw; }
+      .memory-detail figcaption { align-items: flex-start; flex-direction: column; gap: 7px; }
+      .memory-detail-close { top: 14px; right: 14px; }
+    }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      clip-path: inset(50%) !important;
+      white-space: nowrap !important;
+    }
+    .memory-placeholder[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -915,7 +1309,16 @@
       <div class="title-stage">
         <span class="orbit orbit-a" aria-hidden="true"></span>
         <span class="orbit orbit-b" aria-hidden="true"></span>
-        <h1 class="title" aria-label="柔神"><span>柔</span><span>神</span></h1>
+        <svg class="heart-constellation" viewBox="0 0 200 180" aria-hidden="true" focusable="false">
+          <path d="M100 156 C83 140 35 104 35 65 C35 42 52 28 72 28 C86 28 96 37 100 47 C104 37 114 28 128 28 C148 28 165 42 165 65 C165 104 117 140 100 156" />
+          <circle cx="35" cy="65" r="2.4" />
+          <circle cx="72" cy="28" r="2.4" />
+          <circle cx="100" cy="47" r="2.4" />
+          <circle cx="128" cy="28" r="2.4" />
+          <circle cx="165" cy="65" r="2.4" />
+          <circle cx="100" cy="156" r="2.4" />
+        </svg>
+        <h1 class="title" id="title" role="button" tabindex="0" aria-label="柔神，连续点击五次或长按三秒会有惊喜"><span>柔</span><span>神</span></h1>
       </div>
 
       <p class="subtitle">温柔有神 · 自由有光</p>
@@ -926,10 +1329,20 @@
           <span id="ignite-label">为柔神点亮夜空</span>
           <span class="star" aria-hidden="true">✦</span>
         </button>
-        <button class="btn-text" id="about-button" type="button">
-          <span>读一封写给你的信</span>
-          <span aria-hidden="true">↗</span>
-        </button>
+        <div class="secondary-actions">
+          <button class="btn-text" id="wish-button" type="button">
+            <span>留一句话</span>
+            <span aria-hidden="true">✦</span>
+          </button>
+          <button class="btn-text" id="memory-button" type="button">
+            <span>回忆星匣</span>
+            <span aria-hidden="true">✧</span>
+          </button>
+          <button class="btn-text" id="about-button" type="button">
+            <span>读一封写给你的信</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+        </div>
       </div>
 
       <section class="star-ritual" id="star-ritual" aria-label="点亮属于柔神的三颗星">
@@ -958,7 +1371,7 @@
 
     <div class="bottom-info">
       <span class="hint"><span class="hint-dot" aria-hidden="true"></span>按住或滑动夜空，烟花不停</span>
-      <span class="bottom-code">NO. 1027 · STAR RITUAL</span>
+      <span class="bottom-code">NO. 1029 · WISHING STARS</span>
     </div>
 
     <div class="letter-overlay" id="letter-overlay" aria-hidden="true">
@@ -967,13 +1380,88 @@
         <h2 class="letter-title" id="letter-title">给 <em>柔神</em></h2>
 
         <div class="letter-body">
-          <p>之前说过给你也写个感谢信，不知道你还记不记得，我写字很难看，文化也不高，将就看一下吧。</p>
+          <p>之前说过给你也写个感谢信，不知道你还记不记得，我写字很难看，文化也不高，所以以这样的形式，将就看一下，希望你不嫌弃。</p>
           <p>从我个人角度来说，我觉得你蛮好的，挺完美的，不管是美貌、声音、性格或者三观都很好，所以你完全可以更自信一点，而且你完全可以被真心对待。</p>
           <p>我没有答应过别人什么要求，但是既然答应了，就要做到。我也不是什么有钱人，只不过在做我力所能及的范围内的事，虽然不知道还能在你的生活中停留多久，但是既然还在停留中，那就做好我的事情。</p>
           <p>因为我也知道一些事情，所以做有点二杯了，但是我这个人就是这样的，很笨的事情，我也会做，我觉得应该是有一点点的意思，哪怕微乎其微。</p>
           <p>每个人的生命中会有很多过客，除了自己都是过客，那为什么还要相遇？为什么相遇还要相识？结局注定是分离还有什么意义？我觉得有，每个人都是不同的个体，所以相遇相识都会有不同的感受和经历，所以我觉得哪怕最后一定会分开，相遇的意义就是被你改变的那部分我，代替你陪在了我身边。</p>
         </div>
       </article>
+    </div>
+
+    <div class="wish-stars-layer" id="wish-stars-layer" aria-label="留在星空里的话"></div>
+
+    <div class="wish-overlay" id="wish-overlay" aria-hidden="true">
+      <section class="wish-panel" role="dialog" aria-modal="true" aria-labelledby="wish-title">
+        <button class="letter-close" id="wish-close" type="button" aria-label="关闭留一句话面板">×</button>
+        <p class="wish-kicker">LEAVE A LIGHT / FOR ROUSHEN</p>
+        <h2 class="wish-title" id="wish-title">留一句话给柔神</h2>
+        <p class="wish-hint">每写一句，夜空里就会多一颗星。点开星星就能看见它。</p>
+        <label class="sr-only" for="wish-input">想对柔神说的话</label>
+        <textarea class="wish-input" id="wish-input" maxlength="64" placeholder="想对柔神说的话……"></textarea>
+        <div class="wish-input-foot">
+          <span class="wish-count" id="wish-count">0 / 64</span>
+          <button class="wish-submit" id="wish-submit" type="button">放进星空 ✦</button>
+        </div>
+      </section>
+    </div>
+    <div class="wish-flight-layer" id="wish-flight-layer" aria-hidden="true"></div>
+
+    <div class="memory-overlay" id="memory-overlay" aria-hidden="true">
+      <section class="memory-panel" role="dialog" aria-modal="true" aria-labelledby="memory-title">
+        <button class="letter-close" id="memory-close" type="button" aria-label="关闭回忆星匣">×</button>
+        <p class="memory-kicker">MEMORY CONSTELLATION / 03</p>
+        <h2 class="memory-title" id="memory-title">回忆星匣</h2>
+        <p class="memory-lead">点开一颗星，看看被好好收起的瞬间。<br />照片只保存在这台设备的浏览器里。</p>
+        <div class="memory-grid">
+          <article class="memory-card">
+            <button class="memory-open" type="button" data-memory-index="0" aria-label="打开第一张回忆">
+              <span class="memory-visual">
+                <img class="memory-image" id="memory-image-0" data-memory-image="0" alt="第一张回忆照片" hidden />
+                <span class="memory-placeholder" data-memory-placeholder="0"><span aria-hidden="true">✦</span><small>添加一张照片</small></span>
+              </span>
+              <span class="memory-meta"><span>01 · 初见</span><strong>故事开始的地方</strong></span>
+            </button>
+            <label class="memory-upload">添加照片<input type="file" accept="image/*" data-memory-upload="0" /></label>
+          </article>
+          <article class="memory-card">
+            <button class="memory-open" type="button" data-memory-index="1" aria-label="打开第二张回忆">
+              <span class="memory-visual">
+                <img class="memory-image" id="memory-image-1" data-memory-image="1" alt="第二张回忆照片" hidden />
+                <span class="memory-placeholder" data-memory-placeholder="1"><span aria-hidden="true">✦</span><small>添加一张照片</small></span>
+              </span>
+              <span class="memory-meta"><span>02 · 某一天</span><strong>被记住的普通一天</strong></span>
+            </button>
+            <label class="memory-upload">添加照片<input type="file" accept="image/*" data-memory-upload="1" /></label>
+          </article>
+          <article class="memory-card">
+            <button class="memory-open" type="button" data-memory-index="2" aria-label="打开第三张回忆">
+              <span class="memory-visual">
+                <img class="memory-image" id="memory-image-2" data-memory-image="2" alt="第三张回忆照片" hidden />
+                <span class="memory-placeholder" data-memory-placeholder="2"><span aria-hidden="true">✦</span><small>添加一张照片</small></span>
+              </span>
+              <span class="memory-meta"><span>03 · 以后</span><strong>还有很多页，等我们一起写</strong></span>
+            </button>
+            <label class="memory-upload">添加照片<input type="file" accept="image/*" data-memory-upload="2" /></label>
+          </article>
+        </div>
+        <p class="memory-note">图片会在本机压缩后保存，不会上传到服务器。</p>
+      </section>
+
+      <div class="memory-detail" id="memory-detail" role="dialog" aria-modal="true" aria-labelledby="memory-detail-caption" aria-hidden="true">
+        <button class="letter-close memory-detail-close" id="memory-detail-close" type="button" aria-label="关闭照片，让它化作星尘">×</button>
+        <figure>
+          <img id="memory-detail-image" alt="回忆照片" />
+          <figcaption><span id="memory-detail-index">01</span><p id="memory-detail-caption">故事开始的地方</p></figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="secret-overlay" id="secret-overlay" aria-hidden="true" role="status" aria-live="polite">
+      <div class="secret-card">
+        <span class="secret-symbol" aria-hidden="true">✦</span>
+        <p class="secret-copy">无论世界怎么变，<br />愿柔神永远有地方做自己。</p>
+      </div>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1005,6 +1493,28 @@
       const toast = document.getElementById("toast");
       const curtain = document.getElementById("curtain");
       const homeMark = document.getElementById("home-mark");
+      const titleElement = document.getElementById("title");
+      const wishButton = document.getElementById("wish-button");
+      const wishOverlay = document.getElementById("wish-overlay");
+      const wishClose = document.getElementById("wish-close");
+      const wishInput = document.getElementById("wish-input");
+      const wishCount = document.getElementById("wish-count");
+      const wishSubmit = document.getElementById("wish-submit");
+      const wishStarsLayer = document.getElementById("wish-stars-layer");
+      const wishFlightLayer = document.getElementById("wish-flight-layer");
+      const memoryButton = document.getElementById("memory-button");
+      const memoryOverlay = document.getElementById("memory-overlay");
+      const memoryClose = document.getElementById("memory-close");
+      const memoryDetail = document.getElementById("memory-detail");
+      const memoryDetailClose = document.getElementById("memory-detail-close");
+      const memoryDetailImage = document.getElementById("memory-detail-image");
+      const memoryDetailCaption = document.getElementById("memory-detail-caption");
+      const memoryDetailIndex = document.getElementById("memory-detail-index");
+      const memoryOpenButtons = Array.from(document.querySelectorAll(".memory-open"));
+      const memoryUploadInputs = Array.from(document.querySelectorAll("[data-memory-upload]"));
+      const memoryImageElements = Array.from(document.querySelectorAll("[data-memory-image]"));
+      const memoryPlaceholders = Array.from(document.querySelectorAll("[data-memory-placeholder]"));
+      const secretOverlay = document.getElementById("secret-overlay");
 
       const starCtx = starCanvas.getContext("2d", { alpha: true });
       const fireCtx = fireworkCanvas.getContext("2d", { alpha: true });
@@ -1041,6 +1551,26 @@
       const litStars = new Set();
       let ritualFinaleAnnounced = false;
       const ritualStorageKey = "roushen-ritual-v1";
+      const wishStorageKey = "roushen-wish-v1";
+      const memoryStorageKey = "roushen-memories-v1";
+      let wishItems = [];
+      let wishBubbleTimer = 0;
+      let titleTapCount = 0;
+      let titleTapTimer = 0;
+      let titlePressTimer = 0;
+      let titlePressFired = false;
+      let secretActive = false;
+      let secretTimer = 0;
+      let memoryImages = [null, null, null];
+      let activeMemoryIndex = -1;
+      const memoryCaptions = ["故事开始的地方", "被记住的普通一天", "还有很多页，等我们一起写"];
+      const defaultWishes = [
+        { text: "天天开心", x: 14, y: 21 },
+        { text: "平安喜乐", x: 86, y: 22 },
+        { text: "自由自在", x: 18, y: 35 },
+        { text: "万事顺意", x: 82, y: 36 },
+        { text: "被爱包围", x: 12, y: 47 }
+      ];
 
       const palette = [
         [255, 232, 237],
@@ -1087,6 +1617,16 @@
 
       function rgba(color, alpha) {
         return "rgba(" + color[0] + "," + color[1] + "," + color[2] + "," + alpha + ")";
+      }
+
+      function applyTimeSky() {
+        const hour = new Date().getHours();
+        let theme = "theme-night";
+        if (hour >= 5 && hour < 8) theme = "theme-dawn";
+        else if (hour >= 8 && hour < 17) theme = "theme-day";
+        else if (hour >= 17 && hour < 22) theme = "theme-dusk";
+        ["theme-dawn", "theme-day", "theme-dusk", "theme-night"].forEach((name) => scene.classList.remove(name));
+        scene.classList.add(theme);
       }
 
       function resize() {
@@ -1795,6 +2335,469 @@
         showToast("三颗星已回到夜空");
       }
 
+      function makeWishId() {
+        return "wish-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function createDefaultWishes() {
+        return defaultWishes.map((wish, index) => ({
+          id: "preset-" + index,
+          text: wish.text,
+          x: wish.x,
+          y: wish.y,
+          preset: true
+        }));
+      }
+
+      function normalizeWish(item, index) {
+        if (!item || typeof item.text !== "string" || !item.text.trim()) return null;
+        return {
+          id: typeof item.id === "string" && item.id ? item.id : "wish-migrated-" + index,
+          text: item.text.trim().slice(0, 64),
+          x: clamp(Number(item.x) || 18, 8, 92),
+          y: clamp(Number(item.y) || 25, 14, 50),
+          preset: Boolean(item.preset)
+        };
+      }
+
+      function loadWishState() {
+        try {
+          const raw = window.localStorage.getItem(wishStorageKey);
+          if (raw) {
+            const saved = JSON.parse(raw);
+            const source = Array.isArray(saved) ? saved : (saved && saved.text ? [saved] : []);
+            const customItems = source
+              .map(normalizeWish)
+              .filter(Boolean)
+              .filter((item) => !item.preset && !item.id.startsWith("preset-"));
+            wishItems = createDefaultWishes().concat(customItems);
+          } else {
+            wishItems = createDefaultWishes();
+          }
+        } catch (error) {
+          wishItems = createDefaultWishes();
+        }
+        saveWishState();
+      }
+
+      function saveWishState() {
+        try {
+          window.localStorage.setItem(wishStorageKey, JSON.stringify(wishItems));
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function chooseWishPosition(index) {
+        const spots = [
+          { x: 15, y: 20 }, { x: 85, y: 21 }, { x: 18, y: 34 }, { x: 82, y: 36 },
+          { x: 12, y: 47 }, { x: 88, y: 47 }, { x: 28, y: 17 }, { x: 72, y: 18 },
+          { x: 27, y: 43 }, { x: 73, y: 43 }, { x: 11, y: 28 }, { x: 89, y: 29 },
+          { x: 24, y: 29 }, { x: 76, y: 30 }, { x: 9, y: 39 }, { x: 91, y: 38 }
+        ];
+        const spot = spots[index % spots.length];
+        return {
+          x: clamp(spot.x + random(-1.1, 1.1), 8, 92),
+          y: clamp(spot.y + random(-1.2, 1.2), 14, 50)
+        };
+      }
+
+      function renderWishStars() {
+        wishStarsLayer.replaceChildren();
+        wishItems.forEach((wish, index) => {
+          const star = document.createElement("button");
+          star.type = "button";
+          star.className = "wish-star is-visible";
+          star.dataset.wishId = wish.id;
+          star.style.left = wish.x + "%";
+          star.style.top = wish.y + "%";
+          star.setAttribute("aria-label", "查看星空留言：" + wish.text);
+          if (wish.x > 58) star.classList.add("is-right");
+
+          const core = document.createElement("span");
+          core.className = "wish-star-core";
+          core.setAttribute("aria-hidden", "true");
+          core.textContent = "✦";
+          core.style.animationDelay = (-index * 0.31) + "s";
+
+          const bubble = document.createElement("span");
+          bubble.className = "wish-star-bubble";
+          bubble.textContent = wish.text;
+
+          star.append(core, bubble);
+          wishStarsLayer.appendChild(star);
+        });
+      }
+
+      function updateWishCount() {
+        wishCount.textContent = wishInput.value.length + " / 64";
+      }
+
+      function openWishPanel() {
+        wishInput.value = "";
+        updateWishCount();
+        wishOverlay.classList.add("is-open");
+        wishOverlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        window.setTimeout(() => wishInput.focus(), 260);
+      }
+
+      function closeWishPanel(restoreFocus = true) {
+        wishOverlay.classList.remove("is-open");
+        wishOverlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (restoreFocus) wishButton.focus();
+      }
+
+      function burstWishStar(x, y) {
+        const colors = [[255, 184, 208], [255, 239, 225]];
+        explode(x, y, "ring", colors, viewportWidth < 600 ? 44 : 68, 0.88);
+        const offsets = [-0.12, 0.12, -0.05, 0.05];
+        offsets.forEach((offset, index) => {
+          window.setTimeout(() => {
+            launchRocket(clamp(x + viewportWidth * offset, 35, viewportWidth - 35), clamp(y + random(-34, 34), 72, viewportHeight * 0.66), {
+              type: index === 1 ? "heart" : choose(["ring", "peony", "willow"]),
+              size: 0.7,
+              count: viewportWidth < 600 ? 42 : 62,
+              colors,
+              duration: random(640, 820)
+            });
+          }, index * 130);
+        });
+      }
+
+      function flyWishToSky(wish, startX, startY) {
+        const flight = document.createElement("div");
+        flight.className = "wish-flight";
+        flight.textContent = wish.text;
+        flight.style.left = startX + "px";
+        flight.style.top = startY + "px";
+        wishFlightLayer.appendChild(flight);
+
+        const targetX = viewportWidth * wish.x / 100;
+        const targetY = viewportHeight * wish.y / 100;
+        const dx = targetX - startX;
+        const dy = targetY - startY;
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          flight.remove();
+          renderWishStars();
+          burstWishStar(targetX, targetY);
+          showToast("又一颗愿望星亮起来了。", 3000, true);
+        };
+
+        if (typeof flight.animate === "function" && !reduceMotion) {
+          const animation = flight.animate([
+            { transform: "translate(-50%, -50%) scale(1)", opacity: 1, filter: "blur(0)" },
+            { transform: "translate(calc(-50% + " + dx * 0.5 + "px), calc(-50% + " + dy * 0.5 + "px)) scale(0.72)", opacity: 0.88, filter: "blur(0.4px)", offset: 0.55 },
+            { transform: "translate(calc(-50% + " + dx + "px), calc(-50% + " + dy + "px)) scale(0.18)", opacity: 0, filter: "blur(2px)" }
+          ], { duration: 1200, easing: "cubic-bezier(.18, .72, .2, 1)" });
+          animation.finished.catch(finish).then(finish);
+        } else {
+          window.setTimeout(finish, reduceMotion ? 120 : 900);
+        }
+      }
+
+      function addWish(text) {
+        if (wishItems.length >= 16) {
+          showToast("星星已经很多啦，先让它们亮一会儿吧。");
+          return null;
+        }
+        const position = chooseWishPosition(wishItems.length);
+        const wish = {
+          id: makeWishId(),
+          text: text.trim().slice(0, 64),
+          x: position.x,
+          y: position.y,
+          preset: false,
+          createdAt: Date.now()
+        };
+        wishItems.push(wish);
+        saveWishState();
+        return wish;
+      }
+
+      function submitWish() {
+        const text = wishInput.value.trim().replace(/\s+/g, " ");
+        if (!text) {
+          showToast("先写一句话，再把它放进星空。");
+          wishInput.focus();
+          return;
+        }
+        if (wishItems.length >= 16) {
+          showToast("星星已经很多啦，先让它们亮一会儿吧。");
+          return;
+        }
+        const rect = wishSubmit.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        const wish = addWish(text);
+        if (!wish) return;
+        closeWishPanel(false);
+        flyWishToSky(wish, startX, startY);
+      }
+
+      function handleWishStarClick(event) {
+        const star = event.target.closest(".wish-star");
+        if (!star) return;
+        const wish = wishItems.find((item) => item.id === star.dataset.wishId);
+        if (!wish) return;
+        const open = !star.classList.contains("is-open");
+        wishStarsLayer.querySelectorAll(".wish-star.is-open").forEach((item) => item.classList.remove("is-open"));
+        window.clearTimeout(wishBubbleTimer);
+        if (open) {
+          star.classList.add("is-open");
+          burstWishStar(viewportWidth * wish.x / 100, viewportHeight * wish.y / 100);
+          wishBubbleTimer = window.setTimeout(() => star.classList.remove("is-open"), 6000);
+        }
+      }
+
+      function restoreWish() {
+        loadWishState();
+        renderWishStars();
+      }
+
+      function loadMemoryState() {
+        try {
+          const saved = JSON.parse(window.localStorage.getItem(memoryStorageKey) || "[]");
+          if (!Array.isArray(saved)) return;
+          for (let index = 0; index < 3; index += 1) {
+            const value = saved[index];
+            if (typeof value === "string" && value.startsWith("data:image/")) {
+              memoryImages[index] = value;
+            }
+          }
+        } catch (error) {
+          memoryImages = [null, null, null];
+        }
+      }
+
+      function saveMemoryState() {
+        try {
+          window.localStorage.setItem(memoryStorageKey, JSON.stringify(memoryImages));
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function renderMemories() {
+        memoryImageElements.forEach((image, index) => {
+          const source = memoryImages[index];
+          if (source) {
+            image.src = source;
+            image.hidden = false;
+            if (memoryPlaceholders[index]) memoryPlaceholders[index].hidden = true;
+          } else {
+            image.hidden = true;
+            image.removeAttribute("src");
+            if (memoryPlaceholders[index]) memoryPlaceholders[index].hidden = false;
+          }
+        });
+      }
+
+      function openMemoryPanel() {
+        renderMemories();
+        memoryOverlay.classList.add("is-open");
+        memoryOverlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        window.setTimeout(() => memoryClose.focus(), 260);
+      }
+
+      function closeMemoryPanel() {
+        memoryOverlay.classList.remove("is-open");
+        memoryOverlay.setAttribute("aria-hidden", "true");
+        memoryDetail.classList.remove("is-open", "is-dissolving");
+        memoryDetail.setAttribute("aria-hidden", "true");
+        activeMemoryIndex = -1;
+        document.body.style.overflow = "";
+        memoryButton.focus();
+      }
+
+      function openMemoryDetail(index) {
+        const source = memoryImages[index];
+        if (!source) {
+          showToast("先为这颗星添加一张照片。");
+          if (memoryUploadInputs[index]) memoryUploadInputs[index].click();
+          return;
+        }
+        activeMemoryIndex = index;
+        memoryDetailImage.src = source;
+        memoryDetailCaption.textContent = memoryCaptions[index];
+        memoryDetailIndex.textContent = String(index + 1).padStart(2, "0");
+        memoryDetail.classList.add("is-open");
+        memoryDetail.setAttribute("aria-hidden", "false");
+        window.setTimeout(() => memoryDetailClose.focus(), 260);
+      }
+
+      function closeMemoryDetail() {
+        if (!memoryDetail.classList.contains("is-open")) return;
+        const rect = memoryDetailImage.getBoundingClientRect();
+        const x = rect.left + rect.width / 2;
+        const y = rect.top + rect.height / 2;
+        memoryDetail.classList.add("is-dissolving");
+
+        window.setTimeout(() => {
+          memoryDetail.classList.remove("is-open", "is-dissolving");
+          memoryDetail.setAttribute("aria-hidden", "true");
+          memoryOverlay.classList.remove("is-open");
+          memoryOverlay.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          activeMemoryIndex = -1;
+          triggerVisualCelebration(1900, 1400);
+          explode(x, y, "ring", [[255, 226, 222], [255, 184, 208]], viewportWidth < 600 ? 48 : 76, 0.9);
+          launchRocket(x, viewportHeight * 0.25, {
+            type: "willow",
+            size: 0.78,
+            count: viewportWidth < 600 ? 48 : 72,
+            colors: [[255, 220, 202], [255, 184, 208]],
+            duration: 820
+          });
+          showToast("回忆化作了星尘。", 2600, true);
+        }, reduceMotion ? 80 : 460);
+      }
+
+      function compressMemoryImage(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = reject;
+          reader.onload = () => {
+            const image = new Image();
+            image.onerror = reject;
+            image.onload = () => {
+              try {
+                const targetWidth = 900;
+                const targetHeight = 675;
+                const scale = Math.max(targetWidth / image.width, targetHeight / image.height);
+                const drawWidth = image.width * scale;
+                const drawHeight = image.height * scale;
+                const canvas = document.createElement("canvas");
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const context = canvas.getContext("2d");
+                context.drawImage(
+                  image,
+                  (targetWidth - drawWidth) / 2,
+                  (targetHeight - drawHeight) / 2,
+                  drawWidth,
+                  drawHeight
+                );
+                resolve(canvas.toDataURL("image/jpeg", 0.8));
+              } catch (error) {
+                reject(error);
+              }
+            };
+            image.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function handleMemoryUpload(event) {
+        const input = event.currentTarget;
+        const index = Number(input.dataset.memoryUpload);
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          showToast("请选择一张图片。");
+          input.value = "";
+          return;
+        }
+        if (file.size > 15 * 1024 * 1024) {
+          showToast("照片太大，请换一张小于 15MB 的图片。");
+          input.value = "";
+          return;
+        }
+
+        showToast("正在把照片收进星匣…", 1800);
+        try {
+          const dataUrl = await compressMemoryImage(file);
+          memoryImages[index] = dataUrl;
+          renderMemories();
+          if (!saveMemoryState()) {
+            memoryImages[index] = null;
+            renderMemories();
+            showToast("浏览器空间不足，这张照片没有保存。");
+          } else {
+            showToast("照片已经留在本机星匣里。");
+          }
+        } catch (error) {
+          showToast("这张照片暂时没能收进来。");
+        } finally {
+          input.value = "";
+        }
+      }
+
+      function restoreMemories() {
+        loadMemoryState();
+        renderMemories();
+      }
+
+      function triggerEasterEgg() {
+        if (secretActive) return;
+        secretActive = true;
+        titleTapCount = 0;
+        window.clearTimeout(titleTapTimer);
+        window.clearTimeout(secretTimer);
+
+        scene.classList.add("is-easter-egg");
+        secretOverlay.classList.add("is-open");
+        secretOverlay.setAttribute("aria-hidden", "false");
+        triggerVisualCelebration(4300, 3200);
+        playCelebrationChord();
+
+        const rect = titleElement.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        explode(centerX, centerY, "heart", [[255, 220, 228], [255, 184, 208]], viewportWidth < 600 ? 58 : 92, 0.86);
+
+        if (!reduceMotion) {
+          for (let index = 0; index < 16; index += 1) {
+            window.setTimeout(spawnShootingStar, index * 145);
+          }
+        }
+
+        secretTimer = window.setTimeout(() => {
+          secretOverlay.classList.remove("is-open");
+          secretOverlay.setAttribute("aria-hidden", "true");
+          scene.classList.remove("is-easter-egg");
+          secretActive = false;
+          showToast("你找到了藏在标题里的星星。", 2800, true);
+        }, reduceMotion ? 1800 : 5200);
+      }
+
+      function registerTitleTap() {
+        if (secretActive) return;
+        titleTapCount += 1;
+        window.clearTimeout(titleTapTimer);
+        titleTapTimer = window.setTimeout(() => {
+          titleTapCount = 0;
+        }, 1700);
+        if (titleTapCount >= 5) triggerEasterEgg();
+      }
+
+      function startTitlePress(event) {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        titlePressFired = false;
+        window.clearTimeout(titlePressTimer);
+        titlePressTimer = window.setTimeout(() => {
+          titlePressFired = true;
+          triggerEasterEgg();
+        }, 3000);
+      }
+
+      function cancelTitlePress() {
+        window.clearTimeout(titlePressTimer);
+        if (titlePressFired) {
+          window.setTimeout(() => {
+            titlePressFired = false;
+          }, 0);
+        }
+      }
+
       function openLetter() {
         letterOverlay.classList.add("is-open");
         letterOverlay.setAttribute("aria-hidden", "false");
@@ -1919,6 +2922,7 @@
         }
       }
 
+      applyTimeSky();
       resize();
       requestAnimationFrame(animate);
 
@@ -1932,6 +2936,7 @@
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           lastFrame = performance.now();
+          applyTimeSky();
           scheduleAutoFirework();
         } else {
           pointerHeld = false;
@@ -1955,14 +2960,62 @@
       });
       ritualReset.addEventListener("click", resetRitual);
 
+      wishButton.addEventListener("click", openWishPanel);
+      wishClose.addEventListener("click", () => closeWishPanel());
+      wishSubmit.addEventListener("click", submitWish);
+      wishInput.addEventListener("input", updateWishCount);
+      wishStarsLayer.addEventListener("click", handleWishStarClick);
+      wishOverlay.addEventListener("click", (event) => {
+        if (event.target === wishOverlay) closeWishPanel();
+      });
+
+      memoryButton.addEventListener("click", openMemoryPanel);
+      memoryClose.addEventListener("click", closeMemoryPanel);
+      memoryDetailClose.addEventListener("click", closeMemoryDetail);
+      memoryOpenButtons.forEach((button) => {
+        button.addEventListener("click", () => openMemoryDetail(Number(button.dataset.memoryIndex)));
+      });
+      memoryUploadInputs.forEach((input) => {
+        input.addEventListener("change", handleMemoryUpload);
+      });
+      memoryOverlay.addEventListener("click", (event) => {
+        if (event.target === memoryOverlay) closeMemoryPanel();
+      });
+      memoryDetail.addEventListener("click", (event) => {
+        if (event.target === memoryDetail) closeMemoryDetail();
+      });
+
+      titleElement.addEventListener("click", registerTitleTap);
+      titleElement.addEventListener("pointerdown", startTitlePress);
+      titleElement.addEventListener("pointerup", cancelTitlePress);
+      titleElement.addEventListener("pointercancel", cancelTitlePress);
+      titleElement.addEventListener("pointerleave", cancelTitlePress);
+      titleElement.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          registerTitleTap();
+        }
+      });
+
       letterOverlay.addEventListener("click", (event) => {
         if (event.target === letterOverlay) closeLetter();
       });
 
       restoreRitual();
+      restoreWish();
+      restoreMemories();
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape" && letterOverlay.classList.contains("is-open")) closeLetter();
+        if (event.key !== "Escape") return;
+        if (memoryDetail.classList.contains("is-open")) {
+          closeMemoryDetail();
+        } else if (memoryOverlay.classList.contains("is-open")) {
+          closeMemoryPanel();
+        } else if (wishOverlay.classList.contains("is-open")) {
+          closeWishPanel();
+        } else if (letterOverlay.classList.contains("is-open")) {
+          closeLetter();
+        }
       });
 
       window.setTimeout(() => curtain.classList.add("is-gone"), reduceMotion ? 250 : 1350);
